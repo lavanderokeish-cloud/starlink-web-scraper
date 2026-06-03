@@ -1,48 +1,15 @@
-import pandas as pd
-import requests
-from bs4 import BeautifulSoup
-import os
-
-OUTPUT_FILE = "data/daily_data_usage.csv"
-
-
-def scrape_starlink(url):
-    """
-    Scrapes daily data usage information from a webpage.
-
-    Modify the HTML selectors according to the actual Starlink page.
-    """
-
-    response = requests.get(url)
-    response.raise_for_status()
-
-    soup = BeautifulSoup(response.text, "html.parser")
-
-    records = []
-
-    # Example table structure:
-    # <table>
-    #   <tr><th>Date</th><th>Usage</th></tr>
-    #   <tr><td>2026-06-01</td><td>12.4 GB</td></tr>
-    # </table>
-
-    rows = soup.select("table tr")
-
-    for row in rows[1:]:
-        cols = row.find_all("td")
-
-        if len(cols) >= 2:
-            date = cols[0].get_text(strip=True)
-            usage = cols[1].get_text(strip=True)
-
-            records.append({
-                "Date": date,
-                "Data_Usage": usage
-            })
-
-    df = pd.DataFrame(records)
-
-    os.makedirs("data", exist_ok=True)
-    df.to_csv(OUTPUT_FILE, index=False)
-
-    return df
+starlink-webscraper/
+│
+├── app.py
+├── scraper.py
+├── requirements.txt
+├── README.md
+│
+├── data/
+│   └── daily_data_usage.csv
+│
+├── templates/
+│   └── index.html
+│
+└── static/
+    └── style.css
